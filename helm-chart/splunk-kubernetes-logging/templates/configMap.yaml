@@ -15,6 +15,7 @@ data:
     @include source.journald.conf
     @include monit.conf
     @include output.conf
+    @include k8.metadata.conf
 
   system.conf: |-
     # system wide configurations
@@ -192,6 +193,13 @@ data:
       <filter monitor_agent>
         @type jq_transformer
         jq ".record.source = \"namespace:#{ENV['MY_NAMESPACE']}/pod:#{ENV['MY_POD_NAME']}\" | .record.sourcetype = \"fluentd:monitor-agent\" | .record"
+      </filter>
+
+      <filter kubernetes.var.log.containers.**.log>
+        @type kubernetes_metadata
+        lookup_from_k8s_field true
+        ca_file /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file /var/run/secrets/kubernetes.io/serviceaccount/token
       </filter>
 
       # = output =
