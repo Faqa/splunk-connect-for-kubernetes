@@ -15,7 +15,6 @@ data:
     @include source.journald.conf
     @include monit.conf
     @include output.conf
-    @include k8.metadata.conf
 
   system.conf: |-
     # system wide configurations
