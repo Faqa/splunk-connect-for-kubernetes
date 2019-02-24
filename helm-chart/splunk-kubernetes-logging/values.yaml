@@ -216,6 +216,7 @@ logs:
 
 # Defines which version of image to use, and how it should be pulled.
 image:
+  repo: "armis/splunk_k8"
   tag: 1.0.1
   pullPolicy: IfNotPresent
 

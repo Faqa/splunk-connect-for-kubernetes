@@ -85,6 +85,13 @@ elif startswith({{ list (or .from.container .name) .from.pod | join "/" | quote 
 else empty
 end;
 
+def get_kubernetes_info:
+  .kubernetes.pod_name = .pod
+  | .kubernetes.namespace_name = .namespace
+  | .kubernetes.container_name = .container_name
+  | .docker.id = .container_id
+  | .;
+
 def extract_container_info:
   (.source | ltrimstr("/var/log/containers/") | split("_")) as $parts
   | ($parts[-1] | split("-")) as $cparts
@@ -94,5 +101,5 @@ def extract_container_info:
   | .container_id = ($cparts[-1] | rtrimstr(".log"))
   | .;
   
-.record | extract_container_info | .sourcetype = (find_sourcetype(.pod; .container_name) // "kube:container:\(.container_name)")
+.record | extract_container_info | get_kubernetes_info | .sourcetype = (find_sourcetype(.pod; .container_name) // "kube:container:\(.container_name)")
 {{- end -}}

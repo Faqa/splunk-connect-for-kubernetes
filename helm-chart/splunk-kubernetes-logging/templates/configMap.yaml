@@ -194,6 +194,13 @@ data:
         jq ".record.source = \"namespace:#{ENV['MY_NAMESPACE']}/pod:#{ENV['MY_POD_NAME']}\" | .record.sourcetype = \"fluentd:monitor-agent\" | .record"
       </filter>
 
+      <filter kubernetes.var.log.containers.**.log>
+        @type kubernetes_metadata
+        lookup_from_k8s_field true
+        ca_file /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file /var/run/secrets/kubernetes.io/serviceaccount/token
+      </filter>
+
       # = output =
       <match **>
         @type splunk_hec
